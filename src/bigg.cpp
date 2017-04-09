@@ -198,7 +198,7 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 		{
 			mWidth = w;
 			mHeight = h;
-			reset();
+			reset( mReset );
 		}
 	}
 
