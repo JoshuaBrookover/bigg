@@ -39,11 +39,12 @@ macro( asset_shader FILE VAR )
 	shaderc_parse( OUT ${OPTIONS} )
 	list( APPEND ASSET_COMMANDS COMMAND "$<TARGET_FILE:shaderc>" ${OUT} )
 	list( APPEND ASSET_FILES ${OUTDIR}/dx11/${VAR}.bin ${VAR}_dx11 )
-
+endmacro()
+macro( asset FILE VAR )
+	list( APPEND ASSET_FILES ${FILE} ${VAR} )
 endmacro()
 
-asset_shader( fs_ocornut_imgui.sc fs_ocornut_imgui FRAGMENT )
-asset_shader( vs_ocornut_imgui.sc vs_ocornut_imgui VERTEX )
+include( ../assets.cmake )
 
 add_executable( bin2c bin2c.cpp )
 add_custom_target(
