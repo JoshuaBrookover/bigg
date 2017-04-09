@@ -1,7 +1,9 @@
 #include <bgfx/bgfx.h>
 #include <imgui.h>
 #include <GLFW/glfw3.h>
-//#include <glm/glm.hpp>
+#include <glm/glm.hpp>
+
+#include <bx/allocator.h>
 
 namespace bigg
 {
@@ -9,6 +11,24 @@ namespace bigg
 	const bgfx::Memory* loadMemory( const char* filename );
 	bgfx::ShaderHandle loadShader( const char* shader );
 	bgfx::ProgramHandle loadProgram( const char* vsName, const char* fsName );
+
+	// allocator
+	class Allocator : public bx::AllocatorI
+	{
+	public:
+		void* realloc( void* _ptr, size_t _size, size_t _align, const char* _file, uint32_t _line )
+		{
+			if ( _size == 0 )
+			{
+				free( _ptr );
+				return nullptr;
+			}
+			else
+			{
+				return malloc( _size );
+			}
+		}
+	};
 
 	// application
 	class Application
@@ -42,11 +62,23 @@ namespace bigg
 		virtual void onReset() {};
 	protected:
 		GLFWwindow* mWindow;
+		bigg::Allocator mAllocator;
 	private:
 		uint32_t mReset;
 		uint32_t mWidth;
 		uint32_t mHeight;
 		bool  mMousePressed[ 3 ];
 		float mMouseWheel;
+	};
+
+	// vertex declarations
+	struct PosColorVertex
+	{
+		float x;
+		float y;
+		float z;
+		uint32_t abgr;
+		static void init();
+		static bgfx::VertexDecl ms_decl;
 	};
 }
