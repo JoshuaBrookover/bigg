@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Joshua Brookover
 
 cmake_minimum_required( VERSION 3.0 )
-project( bgfx-projects )
+project( bigg )
 add_subdirectory( deps )
 include( deps/bgfx.cmake/cmake/util/ConfigureDebugging.cmake )
 add_library( bigg STATIC src/bigg.cpp src/bigg_assets.h include/bigg.hpp )
