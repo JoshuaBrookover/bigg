@@ -19,7 +19,7 @@ class ExampleCubes : public bigg::Application
 {
 	void initialize( int _argc, char** _argv )
 	{
-		mProgram = bigg::loadProgram( "shaders/dx11/vs_cubes.bin", "shaders/dx11/fs_cubes.bin" );
+		mProgram = bigg::loadProgram( "shaders/glsl/vs_cubes.bin", "shaders/glsl/fs_cubes.bin" );
 		mVbh = bgfx::createVertexBuffer( bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices) ), bigg::PosColorVertex::ms_decl );
 		mIbh = bgfx::createIndexBuffer( bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip) ) );
 		bgfx::setDebug( BGFX_DEBUG_TEXT );
@@ -80,5 +80,5 @@ private:
 int main( int argc, char** argv )
 {
 	ExampleCubes app;
-	return app.run( argc, argv );
+	return app.run( argc, argv, bgfx::RendererType::OpenGL );
 }

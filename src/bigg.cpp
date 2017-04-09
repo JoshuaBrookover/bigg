@@ -1,6 +1,11 @@
 #include <bigg.hpp>
 
-#define GLFW_EXPOSE_NATIVE_WIN32
+#ifdef _WIN32
+#	define GLFW_EXPOSE_NATIVE_WIN32
+#endif
+#ifdef __APPLE__
+#	define GLFW_EXPOSE_NATIVE_COCOA
+#endif
 #include <bx/fpumath.h>
 #include <bgfx/platform.h>
 #include <GLFW/glfw3native.h>
@@ -151,7 +156,12 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 	// Setup bgfx
 	bgfx::PlatformData platformData;
 	memset( &platformData, 0, sizeof( platformData ) );
+#	ifdef _WIN32
 	platformData.nwh = glfwGetWin32Window( mWindow );
+#	endif
+#	ifdef __APPLE__
+	platformData.nwh = glfwGetCocoaWindow( mWindow );
+#	endif
 	bgfx::setPlatformData( platformData );
 	bgfx::init( type, vendorId, deviceId, callback, allocator );
 
