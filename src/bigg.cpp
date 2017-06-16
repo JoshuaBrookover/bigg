@@ -123,6 +123,8 @@ void bigg::Application::imguiEvents( float dt )
 
 bigg::Application::Application()
 {
+	mWidth = 1280;
+	mHeight = 768;
 	mMousePressed[ 0 ] = false;
 	mMousePressed[ 1 ] = false;
 	mMousePressed[ 2 ] = false;
@@ -139,7 +141,7 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 
 	// Create a window
 	glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
-	mWindow = glfwCreateWindow( 1280, 768, "", NULL, NULL );
+	mWindow = glfwCreateWindow( getWidth(), getHeight(), "", NULL, NULL );
 	if ( !mWindow )
 	{
 		glfwTerminate();
