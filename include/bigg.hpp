@@ -1,3 +1,7 @@
+/*
+ * This is free and unencumbered software released into the public domain. 
+ */
+
 #include <bgfx/bgfx.h>
 #include <imgui.h>
 #include <GLFW/glfw3.h>
@@ -11,6 +15,10 @@ namespace bigg
 	const bgfx::Memory* loadMemory( const char* filename );
 	bgfx::ShaderHandle loadShader( const char* shader );
 	bgfx::ProgramHandle loadProgram( const char* vsName, const char* fsName );
+
+	// glm utils
+	glm::tmat4x4<float, glm::defaultp> perspective( float fovy, float aspect, float zNear, float zFar );
+	// TODO: ortho
 
 	// allocator
 	class Allocator : public bx::AllocatorI
@@ -33,10 +41,14 @@ namespace bigg
 	// application
 	class Application
 	{
+		static void keyCallback( GLFWwindow* window, int key, int scancode, int action, int mods );
+		static void charCallback( GLFWwindow* window, unsigned int codepoint );
+		static void charModsCallback( GLFWwindow* window, unsigned int codepoint, int mods );
 		static void mouseButtonCallback( GLFWwindow* window, int button, int action, int mods );
-		static void scrollCallback( GLFWwindow*, double xoffset, double yoffset );
-		static void keyCallback( GLFWwindow*, int key, int, int action, int mods );
-		static void charCallback( GLFWwindow*, unsigned int c );
+		static void cursorPosCallback( GLFWwindow* window, double xpos, double ypos );
+		static void cursorEnterCallback( GLFWwindow* window, int entered );
+		static void scrollCallback( GLFWwindow* window, double xoffset, double yoffset );
+		static void dropCallback( GLFWwindow* window, int count, const char** paths );
 
 		void imguiEvents( float dt );
 	public:
@@ -59,7 +71,16 @@ namespace bigg
 		virtual void initialize( int _argc, char** _argv ) {};
 		virtual void update( float dt ) {};
 		virtual int shutdown() { return 0; };
+
 		virtual void onReset() {};
+		virtual void onKey( int key, int scancode, int action, int mods ) {}
+		virtual void onChar( unsigned int codepoint ) {}
+		virtual void onCharMods( int codepoint, unsigned int mods ) {}
+		virtual void onMouseButton( int button, int action, int mods ) {}
+		virtual void onCursorPos( double xpos, double ypos ) {}
+		virtual void onCursorEnter( int entered ) {}
+		virtual void onScroll( double xoffset, double yoffset ) {}
+		virtual void onDrop( int count, const char** paths ) {}
 	protected:
 		GLFWwindow* mWindow;
 		bigg::Allocator mAllocator;
@@ -69,16 +90,5 @@ namespace bigg
 		uint32_t mHeight;
 		bool  mMousePressed[ 3 ];
 		float mMouseWheel;
-	};
-
-	// vertex declarations
-	struct PosColorVertex
-	{
-		float x;
-		float y;
-		float z;
-		uint32_t abgr;
-		static void init();
-		static bgfx::VertexDecl ms_decl;
 	};
 }

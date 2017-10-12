@@ -1,3 +1,7 @@
+/*
+ * This is free and unencumbered software released into the public domain. 
+ */
+
 static bgfx::VertexDecl    imguiVertexDecl;
 static bgfx::TextureHandle imguiFontTexture;
 static bgfx::UniformHandle imguiFontUniform;

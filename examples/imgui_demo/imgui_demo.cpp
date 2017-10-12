@@ -1,8 +1,10 @@
+/*
+ * Displays the ImGui test window.
+ *
+ * This is free and unencumbered software released into the public domain. 
+ */
+
 #include "bigg.hpp"
-#include <bimg/decode.h>
-#include "../../src/bigg_assets.h"
-#include <iostream>
-#include <bx/allocator.h>
 
 class ExampleImguiDemo : public bigg::Application
 {

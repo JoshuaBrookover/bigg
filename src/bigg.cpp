@@ -1,3 +1,7 @@
+/*
+ * This is free and unencumbered software released into the public domain. 
+ */
+
 #include <bigg.hpp>
 
 #ifdef _WIN32
@@ -44,25 +48,24 @@ bgfx::ProgramHandle bigg::loadProgram( const char* vsName, const char* fsName )
 	return bgfx::createProgram( vs, fs, true );
 }
 
+// glm utils
+
+glm::tmat4x4<float, glm::defaultp> bigg::perspective(float fovy, float aspect, float zNear, float zFar)
+{
+	glm::tmat4x4<float, glm::defaultp> mtx;
+#	if GLM_COORDINATE_SYSTEM == GLM_LEFT_HANDED
+		bx::mtxProjLh( &mtx[ 0 ][ 0 ], glm::degrees( fovy ), aspect, zNear, zFar, bgfx::getCaps()->homogeneousDepth );
+#	else
+		bx::mtxProjRh( &mtx[ 0 ][ 0 ], glm::degrees( fovy ), aspect, zNear, zFar, bgfx::getCaps()->homogeneousDepth );
+#	endif
+	return mtx;
+}
+
 // application
 
-void bigg::Application::mouseButtonCallback( GLFWwindow* window, int button, int action, int mods )
+void bigg::Application::keyCallback( GLFWwindow* window, int key, int scancode, int action, int mods )
 {
 	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
-	if ( action == GLFW_PRESS && button >= 0 && button < 3 )
-	{
-		app->mMousePressed[button] = true;
-	}
-}
-
-void bigg::Application::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
-	app->mMouseWheel += (float)yoffset;
-}
-
-void bigg::Application::keyCallback( GLFWwindow*, int key, int, int action, int mods )
-{
 	ImGuiIO& io = ImGui::GetIO();
 	if ( action == GLFW_PRESS )
 	{
@@ -76,15 +79,66 @@ void bigg::Application::keyCallback( GLFWwindow*, int key, int, int action, int 
 	io.KeyShift = io.KeysDown[ GLFW_KEY_LEFT_SHIFT ] || io.KeysDown[ GLFW_KEY_RIGHT_SHIFT ];
 	io.KeyAlt = io.KeysDown[ GLFW_KEY_LEFT_ALT ] || io.KeysDown[ GLFW_KEY_RIGHT_ALT ];
 	io.KeySuper = io.KeysDown[ GLFW_KEY_LEFT_SUPER ] || io.KeysDown[ GLFW_KEY_RIGHT_SUPER ];
+	if ( !io.WantCaptureKeyboard )
+	{
+		app->onKey( key, scancode, action, mods );
+	}
 }
 
-void bigg::Application::charCallback(GLFWwindow*, unsigned int c)
+void bigg::Application::charCallback( GLFWwindow* window, unsigned int codepoint )
 {
+	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
 	ImGuiIO& io = ImGui::GetIO();
-	if ( c > 0 && c < 0x10000 )
+	if ( codepoint > 0 && codepoint < 0x10000 )
 	{
-		io.AddInputCharacter( ( unsigned short )c );
+		io.AddInputCharacter( ( unsigned short )codepoint );
 	}
+	app->onChar( codepoint );
+}
+
+void bigg::Application::charModsCallback( GLFWwindow* window, unsigned int codepoint, int mods )
+{
+	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
+	app->onCharMods( codepoint, mods );
+}
+
+void bigg::Application::mouseButtonCallback( GLFWwindow* window, int button, int action, int mods )
+{
+	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
+	ImGuiIO& io = ImGui::GetIO();
+	if ( action == GLFW_PRESS && button >= 0 && button < 3 )
+	{
+		app->mMousePressed[button] = true;
+	}
+	if ( !io.WantCaptureMouse )
+	{
+		app->onMouseButton( button, action, mods );
+	}
+}
+
+void bigg::Application::cursorPosCallback( GLFWwindow* window, double xpos, double ypos )
+{
+	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
+	app->onCursorPos( xpos, ypos );
+}
+
+void bigg::Application::cursorEnterCallback( GLFWwindow* window, int entered )
+{
+	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
+	app->onCursorEnter( entered );
+}
+
+void bigg::Application::scrollCallback( GLFWwindow* window, double xoffset, double yoffset )
+{
+	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
+	app->mMouseWheel += (float)yoffset;
+	app->onScroll( xoffset, yoffset );
+}
+
+void bigg::Application::dropCallback( GLFWwindow* window, int count, const char** paths )
+{
+	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
+	app->onDrop( count, paths );
 }
 
 void bigg::Application::imguiEvents( float dt )
@@ -150,10 +204,19 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 
 	// Setup input callbacks
 	glfwSetWindowUserPointer( mWindow, this );
+	glfwSetKeyCallback( mWindow, keyCallback );
 	glfwSetMouseButtonCallback( mWindow, mouseButtonCallback );
 	glfwSetScrollCallback( mWindow, scrollCallback );
+	glfwSetCharCallback( mWindow, charCallback );
+
 	glfwSetKeyCallback( mWindow, keyCallback );
 	glfwSetCharCallback( mWindow, charCallback );
+	glfwSetCharModsCallback( mWindow, charModsCallback );
+	glfwSetMouseButtonCallback( mWindow, mouseButtonCallback );
+	glfwSetCursorPosCallback( mWindow, cursorPosCallback );
+	glfwSetCursorEnterCallback( mWindow, cursorEnterCallback );
+	glfwSetScrollCallback( mWindow, scrollCallback );
+	glfwSetDropCallback( mWindow, dropCallback );
 
 	// Setup bgfx
 	bgfx::PlatformData platformData;
@@ -165,10 +228,7 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 	platformData.nwh = glfwGetCocoaWindow( mWindow );
 #	endif
 	bgfx::setPlatformData( platformData );
-	bgfx::init( type, vendorId, deviceId, callback, allocator );
-
-	// Setup vertex declarations
-	bigg::PosColorVertex::init();
+	bgfx::init( bgfx::RendererType::OpenGL, vendorId, deviceId, callback, allocator );
 
 	// Setup ImGui
 	imguiInit();
@@ -228,13 +288,3 @@ uint32_t bigg::Application::getHeight()
 {
 	return mHeight;
 }
-
-void bigg::PosColorVertex::init()
-{
-	ms_decl
-		.begin()
-		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::Color0,   4, bgfx::AttribType::Uint8, true)
-		.end();
-};
-bgfx::VertexDecl bigg::PosColorVertex::ms_decl;
