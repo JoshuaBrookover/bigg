@@ -115,7 +115,7 @@ static void imguiRender( ImDrawData* drawData )
 				bgfx::setScissor( xx, yy, uint16_t( bx::fmin( cmd->ClipRect.z, 65535.0f ) - xx ), uint16_t( bx::fmin( cmd->ClipRect.w, 65535.0f ) - yy ) );
 				bgfx::setState( state );
 				bgfx::setTexture( 0, imguiFontUniform, th );
-				bgfx::setVertexBuffer( &tvb, 0, numVertices );
+				bgfx::setVertexBuffer( 0, &tvb, 0, numVertices );
 				bgfx::setIndexBuffer( &tib, offset, cmd->ElemCount );
 				bgfx::submit( 0, imguiProgram );
 			}
@@ -127,9 +127,9 @@ static void imguiRender( ImDrawData* drawData )
 
 static void imguiShutdown()
 {
-	bgfx::destroyUniform( imguiFontUniform );
-	bgfx::destroyTexture( imguiFontTexture );
-	bgfx::destroyProgram( imguiProgram );
+	bgfx::destroy( imguiFontUniform );
+	bgfx::destroy( imguiFontTexture );
+	bgfx::destroy( imguiProgram );
 	ImGui::Shutdown();
 }
 

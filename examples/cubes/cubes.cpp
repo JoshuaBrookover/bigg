@@ -77,7 +77,7 @@ class ExampleCubes : public bigg::Application
 				mtx = glm::translate( mtx, glm::vec3( 15.0f - float( xx ) * 3.0f, -15.0f + float( yy ) * 3.0f, 0.0f ) );
 				mtx *= glm::yawPitchRoll( mTime + xx * 0.21f, mTime + yy * 0.37f, 0.0f );
 				bgfx::setTransform( &mtx[0][0] );
-				bgfx::setVertexBuffer( mVbh );
+				bgfx::setVertexBuffer( 0, mVbh );
 				bgfx::setIndexBuffer( mIbh );
 				bgfx::setState( BGFX_STATE_DEFAULT );
 				bgfx::submit( 0, mProgram );

@@ -10,7 +10,7 @@
 #ifdef __APPLE__
 #	define GLFW_EXPOSE_NATIVE_COCOA
 #endif
-#include <bx/fpumath.h>
+#include <bx/math.h>
 #include <bgfx/platform.h>
 #include <GLFW/glfw3native.h>
 #include <glm/glm.hpp>
