@@ -64,6 +64,12 @@ static void imguiInit()
 	io.GetClipboardTextFn = imguiGetClipboardText;
 }
 
+static void imguiReset( uint16_t width, uint16_t height )
+{
+	bgfx::setViewRect( 200, 0, 0, width, height );
+	bgfx::setViewClear( 0, BGFX_CLEAR_COLOR, 0x00000000 );
+}
+
 static void imguiRender( ImDrawData* drawData )
 {
 	for ( int ii = 0, num = drawData->CmdListsCount; ii < num; ++ii )
@@ -117,7 +123,7 @@ static void imguiRender( ImDrawData* drawData )
 				bgfx::setTexture( 0, imguiFontUniform, th );
 				bgfx::setVertexBuffer( 0, &tvb, 0, numVertices );
 				bgfx::setIndexBuffer( &tib, offset, cmd->ElemCount );
-				bgfx::submit( 0, imguiProgram );
+				bgfx::submit( 200, imguiProgram );
 			}
 
 			offset += cmd->ElemCount;

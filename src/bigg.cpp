@@ -287,6 +287,7 @@ void bigg::Application::reset( uint32_t flags )
 {
 	mReset = flags;
 	bgfx::reset( mWidth, mHeight, mReset );
+	imguiReset( uint16_t( getWidth() ), uint16_t( getHeight() ) );
 	onReset();
 }
 

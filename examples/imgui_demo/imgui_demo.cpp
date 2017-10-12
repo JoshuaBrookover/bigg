@@ -16,6 +16,7 @@ class ExampleImguiDemo : public bigg::Application
 
 	void update( float dt )
 	{
+		bgfx::touch( 0 );
 		ImGui::ShowTestWindow( NULL );
 	}
 };
