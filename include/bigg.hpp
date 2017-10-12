@@ -2,6 +2,8 @@
  * This is free and unencumbered software released into the public domain. 
  */
 
+#pragma once
+
 #include <bgfx/bgfx.h>
 #include <imgui.h>
 #include <GLFW/glfw3.h>
@@ -18,7 +20,7 @@ namespace bigg
 
 	// glm utils
 	glm::tmat4x4<float, glm::defaultp> perspective( float fovy, float aspect, float zNear, float zFar );
-	// TODO: ortho
+	glm::tmat4x4<float, glm::defaultp> ortho( float left, float right, float bottom, float top, float zNear, float zFar, float offset );
 
 	// allocator
 	class Allocator : public bx::AllocatorI

@@ -50,13 +50,24 @@ bgfx::ProgramHandle bigg::loadProgram( const char* vsName, const char* fsName )
 
 // glm utils
 
-glm::tmat4x4<float, glm::defaultp> bigg::perspective(float fovy, float aspect, float zNear, float zFar)
+glm::tmat4x4<float, glm::defaultp> bigg::perspective( float fovy, float aspect, float zNear, float zFar )
 {
 	glm::tmat4x4<float, glm::defaultp> mtx;
 #	if GLM_COORDINATE_SYSTEM == GLM_LEFT_HANDED
 		bx::mtxProjLh( &mtx[ 0 ][ 0 ], glm::degrees( fovy ), aspect, zNear, zFar, bgfx::getCaps()->homogeneousDepth );
 #	else
 		bx::mtxProjRh( &mtx[ 0 ][ 0 ], glm::degrees( fovy ), aspect, zNear, zFar, bgfx::getCaps()->homogeneousDepth );
+#	endif
+	return mtx;
+}
+
+glm::tmat4x4<float, glm::defaultp> bigg::ortho( float left, float right, float bottom, float top, float zNear, float zFar, float offset )
+{
+	glm::tmat4x4<float, glm::defaultp> mtx;
+#	if GLM_COORDINATE_SYSTEM == GLM_LEFT_HANDED
+		bx::mtxOrthoLh( &mtx[ 0 ][ 0 ], left, right, bottom, top, zNear, zFar, offset, bgfx::getCaps()->homogeneousDepth );
+#	else
+		bx::mtxOrthoRh( &mtx[ 0 ][ 0 ], left, right, bottom, top, zNear, zFar, offset, bgfx::getCaps()->homogeneousDepth );
 #	endif
 	return mtx;
 }
