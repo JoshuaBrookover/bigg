@@ -1,5 +1,5 @@
 @echo off
 mkdir build
 cd build
-cmake ../../..
+cmake ../../.. -DBIGG_ASSET_GEN=ON
 cmake --build . --target bigg_assets
