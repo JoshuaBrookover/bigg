@@ -15,6 +15,7 @@ static void imguiInit()
 {
 	unsigned char* data;
 	int width, height;
+	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 
 	// Setup vertex declaration
@@ -136,7 +137,7 @@ static void imguiShutdown()
 	bgfx::destroy( imguiFontUniform );
 	bgfx::destroy( imguiFontTexture );
 	bgfx::destroy( imguiProgram );
-	ImGui::Shutdown();
+	ImGui::DestroyContext();
 }
 
 static const char* imguiGetClipboardText( void* userData )
