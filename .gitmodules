@@ -1,6 +1,6 @@
 [submodule "deps/bgfx.cmake"]
 	path = deps/bgfx.cmake
-	url = https://github.com/JoshuaBrookover/bgfx.cmake.git
+	url = https://github.com/ubaldy/bgfx.cmake.git
 [submodule "deps/imgui"]
 	path = deps/imgui
 	url = https://github.com/ocornut/imgui.git
