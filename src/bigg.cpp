@@ -240,8 +240,6 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 #	endif
 	bgfx::setPlatformData( platformData );
 
-	//bgfx::init( bgfx::RendererType::OpenGL, vendorId, deviceId, callback, allocator );
-
 	uint32_t m_width = getWidth();
 	uint32_t m_height = getHeight();
 	uint32_t m_debug = BGFX_DEBUG_TEXT;
@@ -254,9 +252,6 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 	init.resolution.height = m_height;
 	init.resolution.reset = m_reset;
 	bgfx::init(init);
-
-
-
 
 	// Setup ImGui
 	imguiInit();
