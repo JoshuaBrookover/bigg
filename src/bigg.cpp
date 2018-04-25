@@ -239,7 +239,18 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 	platformData.nwh = glfwGetCocoaWindow( mWindow );
 #	endif
 	bgfx::setPlatformData( platformData );
-	bgfx::init( bgfx::RendererType::OpenGL, vendorId, deviceId, callback, allocator );
+
+	// Init bgfx
+	bgfx::Init init;
+	init.type = bgfx::RendererType::OpenGL;
+	init.vendorId = vendorId;
+	init.deviceId = deviceId;
+	//init.resolution.width = getWidth();
+	//init.resolution.height = getHeight();
+	//init.resolution.reset = BGFX_RESET_VSYNC;
+	init.callback = callback;
+	init.allocator = allocator;
+	bgfx::init(init);
 
 	// Setup ImGui
 	imguiInit();
