@@ -20,6 +20,7 @@ static const unsigned char* name()                                   \
 		case bgfx::RendererType::Gnm:        return NULL;            \
 		case bgfx::RendererType::Metal:      return NULL;            \
 		case bgfx::RendererType::Vulkan:     return NULL;            \
+		case bgfx::RendererType::Count:      return NULL;            \
 	}                                                                \
 	return NULL;                                                     \
 }                                                                    \
@@ -36,6 +37,7 @@ static const int name##_len()                                        \
 		case bgfx::RendererType::Gnm:        return 0;               \
 		case bgfx::RendererType::Metal:      return 0;               \
 		case bgfx::RendererType::Vulkan:     return 0;               \
+		case bgfx::RendererType::Count:      return 0;               \
 	}                                                                \
 	return 0;                                                        \
 }

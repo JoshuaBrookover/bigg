@@ -105,7 +105,7 @@ static void imguiRender( ImDrawData* drawData )
 			}
 			else if ( 0 != cmd->ElemCount )
 			{
-				uint64_t state = BGFX_STATE_RGB_WRITE | BGFX_STATE_ALPHA_WRITE | BGFX_STATE_MSAA;
+				uint64_t state = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA;
 				bgfx::TextureHandle th = imguiFontTexture;
 				if ( cmd->TextureId != NULL )
 				{

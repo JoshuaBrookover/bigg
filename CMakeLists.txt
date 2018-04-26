@@ -2,6 +2,8 @@
 
 cmake_minimum_required( VERSION 3.0 )
 project( bigg )
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_subdirectory( deps )
 include( deps/bgfx.cmake/cmake/util/ConfigureDebugging.cmake )
 add_library( bigg STATIC src/bigg.cpp src/bigg_assets.h src/bigg_imgui.hpp src/bigg_shaders.hpp include/bigg.hpp )
