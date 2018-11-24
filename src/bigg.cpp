@@ -4,12 +4,16 @@
 
 #include <bigg.hpp>
 
-#ifdef _WIN32
-#	define GLFW_EXPOSE_NATIVE_WIN32
-#endif
-#ifdef __APPLE__
+#if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
+#	define GLFW_EXPOSE_NATIVE_X11
+#	define GLFW_EXPOSE_NATIVE_GLX
+#elif BX_PLATFORM_OSX
 #	define GLFW_EXPOSE_NATIVE_COCOA
-#endif
+#	define GLFW_EXPOSE_NATIVE_NSGL
+#elif BX_PLATFORM_WINDOWS
+#	define GLFW_EXPOSE_NATIVE_WIN32
+#	define GLFW_EXPOSE_NATIVE_WGL
+#endif // BX_PLATFORM_
 #include <bx/math.h>
 #include <bgfx/platform.h>
 #include <GLFW/glfw3native.h>
@@ -232,12 +236,14 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 	// Setup bgfx
 	bgfx::PlatformData platformData;
 	memset( &platformData, 0, sizeof( platformData ) );
-#	ifdef _WIN32
-	platformData.nwh = glfwGetWin32Window( mWindow );
-#	endif
-#	ifdef __APPLE__
-	platformData.nwh = glfwGetCocoaWindow( mWindow );
-#	endif
+#if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
+	platformData.nwh = (void*)(uintptr_t)glfwGetX11Window(mWindow);
+	platformData.ndt = glfwGetX11Display();
+#elif BX_PLATFORM_OSX
+	platformData.nwh = glfwGetCocoaWindow(mWindow);
+#elif BX_PLATFORM_WINDOWS
+	platformData.nwh = glfwGetWin32Window(mWindow);
+#endif // BX_PLATFORM_
 	bgfx::setPlatformData( platformData );
 
 	// Init bgfx
