@@ -8,6 +8,7 @@
  */
 
 #include <bigg.hpp>
+#include <bx/string.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp> 
@@ -48,7 +49,33 @@ class ExampleCubes : public bigg::Application
 	void initialize( int _argc, char** _argv )
 	{
 		PosColorVertex::init();
-		mProgram = bigg::loadProgram( "shaders/glsl/vs_cubes.bin", "shaders/glsl/fs_cubes.bin" );
+
+		char vsName[32];
+		char fsName[32];
+
+		const char* shaderPath = "???";
+
+		switch ( bgfx::getRendererType() )
+		{
+			case bgfx::RendererType::Noop:
+			case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/dx9/";   break;
+			case bgfx::RendererType::Direct3D11:
+			case bgfx::RendererType::Direct3D12: shaderPath = "shaders/dx11/";  break;
+			case bgfx::RendererType::Gnm:                                       break;
+			case bgfx::RendererType::Metal:      shaderPath = "shaders/metal/"; break;
+			case bgfx::RendererType::OpenGL:     shaderPath = "shaders/glsl/";  break;
+			case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
+			case bgfx::RendererType::Vulkan:                                    break;
+			case bgfx::RendererType::Count:                                     break;
+		}
+
+		bx::strCopy( vsName, BX_COUNTOF(vsName), shaderPath );
+		bx::strCat( vsName, BX_COUNTOF(vsName), "vs_cubes.bin" );
+
+		bx::strCopy( fsName, BX_COUNTOF(fsName), shaderPath );
+		bx::strCat( fsName, BX_COUNTOF(fsName), "fs_cubes.bin" );
+
+		mProgram = bigg::loadProgram( vsName, fsName );
 		mVbh = bgfx::createVertexBuffer( bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices) ), PosColorVertex::ms_decl );
 		mIbh = bgfx::createIndexBuffer( bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList) ) );
 		bgfx::setDebug( BGFX_DEBUG_TEXT );
