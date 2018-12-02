@@ -248,7 +248,7 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 
 	// Init bgfx
 	bgfx::Init init;
-	init.type = bgfx::RendererType::OpenGL;
+	init.type = type;
 	init.vendorId = vendorId;
 	init.deviceId = deviceId;
 	init.callback = callback;
