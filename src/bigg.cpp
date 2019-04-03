@@ -305,12 +305,12 @@ void bigg::Application::reset( uint32_t flags )
 	onReset();
 }
 
-uint32_t bigg::Application::getWidth()
+uint32_t bigg::Application::getWidth() const
 {
 	return mWidth;
 }
 
-uint32_t bigg::Application::getHeight()
+uint32_t bigg::Application::getHeight() const
 {
 	return mHeight;
 }

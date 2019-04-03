@@ -67,8 +67,8 @@ namespace bigg
 		);
 
 		void reset( uint32_t flags = 0 );
-		uint32_t getWidth();
-		uint32_t getHeight();
+		uint32_t getWidth() const;
+		uint32_t getHeight() const;
 
 		virtual void initialize( int _argc, char** _argv ) {};
 		virtual void update( float dt ) {};
