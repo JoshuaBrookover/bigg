@@ -156,6 +156,15 @@ void bigg::Application::dropCallback( GLFWwindow* window, int count, const char*
 	app->onDrop( count, paths );
 }
 
+void bigg::Application::windowSizeCallback( GLFWwindow* window, int width, int height )
+{
+	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
+	app->mWidth = width;
+	app->mHeight = height;
+	app->reset( app->mReset );
+	app->onWindowSize( width, height );
+}
+
 void bigg::Application::imguiEvents( float dt )
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -190,10 +199,11 @@ void bigg::Application::imguiEvents( float dt )
 #endif
 }
 
-bigg::Application::Application()
+bigg::Application::Application( const char* title, uint32_t width, uint32_t height )
 {
-	mWidth = 1280;
-	mHeight = 768;
+	mWidth = width;
+	mHeight = height;
+	mTitle = title;
 	mMousePressed[ 0 ] = false;
 	mMousePressed[ 1 ] = false;
 	mMousePressed[ 2 ] = false;
@@ -210,7 +220,7 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 
 	// Create a window
 	glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
-	mWindow = glfwCreateWindow( getWidth(), getHeight(), "", NULL, NULL );
+	mWindow = glfwCreateWindow( getWidth(), getHeight(), getTitle(), NULL, NULL );
 	if ( !mWindow )
 	{
 		glfwTerminate();
@@ -220,11 +230,6 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 	// Setup input callbacks
 	glfwSetWindowUserPointer( mWindow, this );
 	glfwSetKeyCallback( mWindow, keyCallback );
-	glfwSetMouseButtonCallback( mWindow, mouseButtonCallback );
-	glfwSetScrollCallback( mWindow, scrollCallback );
-	glfwSetCharCallback( mWindow, charCallback );
-
-	glfwSetKeyCallback( mWindow, keyCallback );
 	glfwSetCharCallback( mWindow, charCallback );
 	glfwSetCharModsCallback( mWindow, charModsCallback );
 	glfwSetMouseButtonCallback( mWindow, mouseButtonCallback );
@@ -232,6 +237,7 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 	glfwSetCursorEnterCallback( mWindow, cursorEnterCallback );
 	glfwSetScrollCallback( mWindow, scrollCallback );
 	glfwSetDropCallback( mWindow, dropCallback );
+	glfwSetWindowSizeCallback( mWindow, windowSizeCallback );
 
 	// Setup bgfx
 	bgfx::PlatformData platformData;
@@ -278,15 +284,6 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 		update( dt );
 		ImGui::Render();
 		bgfx::frame();
-
-		int w, h;
-		glfwGetWindowSize( mWindow, &w, &h );
-		if ( w != mWidth || h != mHeight )
-		{
-			mWidth = w;
-			mHeight = h;
-			reset( mReset );
-		}
 	}
 
 	// Shutdown application and glfw
@@ -313,4 +310,20 @@ uint32_t bigg::Application::getWidth() const
 uint32_t bigg::Application::getHeight() const
 {
 	return mHeight;
+}
+
+void bigg::Application::setSize( int width, int height )
+{
+	glfwSetWindowSize( mWindow, width, height );
+}
+
+const char* bigg::Application::getTitle() const
+{
+	return mTitle;
+}
+
+void bigg::Application::setTitle( const char* title )
+{
+	mTitle = title;
+	glfwSetWindowTitle( mWindow, title);
 }
