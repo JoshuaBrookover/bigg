@@ -51,10 +51,11 @@ namespace bigg
 		static void cursorEnterCallback( GLFWwindow* window, int entered );
 		static void scrollCallback( GLFWwindow* window, double xoffset, double yoffset );
 		static void dropCallback( GLFWwindow* window, int count, const char** paths );
+		static void windowSizeCallback( GLFWwindow* window, int width, int height );
 
 		void imguiEvents( float dt );
 	public:
-		Application();
+		Application( const char* title = "", uint32_t width = 1280, uint32_t height = 768 );
 
 		int run(
 			int argc,
@@ -69,6 +70,9 @@ namespace bigg
 		void reset( uint32_t flags = 0 );
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
+		void setSize( int width, int height );
+		const char* getTitle() const;
+		void setTitle( const char* title );
 
 		virtual void initialize( int _argc, char** _argv ) {};
 		virtual void update( float dt ) {};
@@ -83,6 +87,7 @@ namespace bigg
 		virtual void onCursorEnter( int entered ) {}
 		virtual void onScroll( double xoffset, double yoffset ) {}
 		virtual void onDrop( int count, const char** paths ) {}
+		virtual void onWindowSize( int width, int height ) {}
 	protected:
 		GLFWwindow* mWindow;
 		bigg::Allocator mAllocator;
@@ -90,6 +95,7 @@ namespace bigg
 		uint32_t mReset;
 		uint32_t mWidth;
 		uint32_t mHeight;
+		const char* mTitle;
 		bool  mMousePressed[ 3 ];
 		float mMouseWheel;
 	};

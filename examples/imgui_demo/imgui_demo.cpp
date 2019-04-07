@@ -19,6 +19,9 @@ class ExampleImguiDemo : public bigg::Application
 		bgfx::touch( 0 );
 		ImGui::ShowDemoWindow();
 	}
+public:
+	ExampleImguiDemo()
+		: bigg::Application( "Imgui Demo" ) {}
 };
 
 int main( int argc, char** argv )

@@ -111,6 +111,9 @@ class ExampleCubes : public bigg::Application
 			}
 		}
 	}
+public:
+	ExampleCubes()
+		: bigg::Application( "Cubes", 960, 720 ) {}
 private:
 	bgfx::ProgramHandle mProgram;
 	bgfx::VertexBufferHandle mVbh;
