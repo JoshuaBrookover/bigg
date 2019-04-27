@@ -30,7 +30,7 @@ static void imguiInit()
 	io.Fonts->AddFontDefault();
 	io.Fonts->GetTexDataAsRGBA32( &data, &width, &height );
 	imguiFontTexture = bgfx::createTexture2D( ( uint16_t )width, ( uint16_t )height, false, 1, bgfx::TextureFormat::BGRA8, 0, bgfx::copy( data, width*height * 4 ) );
-	imguiFontUniform = bgfx::createUniform( "s_tex", bgfx::UniformType::Int1 );
+	imguiFontUniform = bgfx::createUniform( "s_tex", bgfx::UniformType::Sampler );
 
 	// Create shader program
 	vs_ocornut_imgui();

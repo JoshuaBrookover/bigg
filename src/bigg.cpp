@@ -58,9 +58,9 @@ glm::tmat4x4<float, glm::defaultp> bigg::perspective( float fovy, float aspect, 
 {
 	glm::tmat4x4<float, glm::defaultp> mtx;
 #	if GLM_COORDINATE_SYSTEM == GLM_LEFT_HANDED
-		bx::mtxProjLh( &mtx[ 0 ][ 0 ], glm::degrees( fovy ), aspect, zNear, zFar, bgfx::getCaps()->homogeneousDepth );
+		bx::mtxProj( &mtx[ 0 ][ 0 ], glm::degrees( fovy ), aspect, zNear, zFar, bgfx::getCaps()->homogeneousDepth, bx::Handness::Left );
 #	else
-		bx::mtxProjRh( &mtx[ 0 ][ 0 ], glm::degrees( fovy ), aspect, zNear, zFar, bgfx::getCaps()->homogeneousDepth );
+		bx::mtxProj( &mtx[ 0 ][ 0 ], glm::degrees( fovy ), aspect, zNear, zFar, bgfx::getCaps()->homogeneousDepth, bx::Handness::Right );
 #	endif
 	return mtx;
 }
@@ -69,9 +69,9 @@ glm::tmat4x4<float, glm::defaultp> bigg::ortho( float left, float right, float b
 {
 	glm::tmat4x4<float, glm::defaultp> mtx;
 #	if GLM_COORDINATE_SYSTEM == GLM_LEFT_HANDED
-		bx::mtxOrthoLh( &mtx[ 0 ][ 0 ], left, right, bottom, top, zNear, zFar, offset, bgfx::getCaps()->homogeneousDepth );
+		bx::mtxOrtho( &mtx[ 0 ][ 0 ], left, right, bottom, top, zNear, zFar, offset, bgfx::getCaps()->homogeneousDepth, bx::Handness::Left );
 #	else
-		bx::mtxOrthoRh( &mtx[ 0 ][ 0 ], left, right, bottom, top, zNear, zFar, offset, bgfx::getCaps()->homogeneousDepth );
+		bx::mtxOrtho( &mtx[ 0 ][ 0 ], left, right, bottom, top, zNear, zFar, offset, bgfx::getCaps()->homogeneousDepth, bx::Handness::Right );
 #	endif
 	return mtx;
 }
