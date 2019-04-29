@@ -109,14 +109,9 @@ static void imguiRender( ImDrawData* drawData )
 				bgfx::TextureHandle th = imguiFontTexture;
 				if ( cmd->TextureId != NULL )
 				{
-					union { ImTextureID ptr; struct { uint16_t flags; bgfx::TextureHandle handle; } s; } texture = { cmd->TextureId };
-					state |= BGFX_STATE_BLEND_FUNC( BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA );
-					th = texture.s.handle;
+					th.idx = uint16_t( uintptr_t( cmd->TextureId ) );
 				}
-				else
-				{
-					state |= BGFX_STATE_BLEND_FUNC( BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA );
-				}
+				state |= BGFX_STATE_BLEND_FUNC( BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA );
 				const uint16_t xx = uint16_t( bx::max( cmd->ClipRect.x, 0.0f ) );
 				const uint16_t yy = uint16_t( bx::max( cmd->ClipRect.y, 0.0f ) );
 				bgfx::setScissor( xx, yy, uint16_t( bx::min( cmd->ClipRect.z, 65535.0f ) - xx ), uint16_t( bx::min( cmd->ClipRect.w, 65535.0f ) - yy ) );
