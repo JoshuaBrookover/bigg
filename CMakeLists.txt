@@ -2,7 +2,7 @@
 
 cmake_minimum_required( VERSION 3.0 )
 project( bigg )
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_subdirectory( deps )
 include( deps/bgfx.cmake/cmake/util/ConfigureDebugging.cmake )
