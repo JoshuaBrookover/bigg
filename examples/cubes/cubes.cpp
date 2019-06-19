@@ -92,7 +92,7 @@ class ExampleCubes : public bigg::Application
 	{
 		mTime += dt;
 		glm::mat4 view = glm::lookAt( glm::vec3( 0.0f, 0.0f, -35.0f ), glm::vec3( 0.0f, 0.0f, 0.0f ), glm::vec3( 0.0f, 1.0f, 0.0f ) );
-		glm::mat4 proj = bigg::perspective( glm::radians( 60.0f ), float( getWidth() ) / getHeight(), 0.1f, 100.0f );
+		glm::mat4 proj = glm::perspective( glm::radians( 60.0f ), float( getWidth() ) / getHeight(), 0.1f, 100.0f );
 		bgfx::setViewTransform( 0, &view[0][0], &proj[0][0] );
 		bgfx::setViewRect( 0, 0, 0, uint16_t( getWidth() ), uint16_t( getHeight() ) );
 		bgfx::touch( 0 );
@@ -100,7 +100,7 @@ class ExampleCubes : public bigg::Application
 		{
 			for ( uint32_t xx = 0; xx < 11; ++xx )
 			{
-				glm::mat4 mtx;
+				glm::mat4 mtx = glm::identity<glm::mat4>();
 				mtx = glm::translate( mtx, glm::vec3( 15.0f - float( xx ) * 3.0f, -15.0f + float( yy ) * 3.0f, 0.0f ) );
 				mtx *= glm::yawPitchRoll( mTime + xx * 0.21f, mTime + yy * 0.37f, 0.0f );
 				bgfx::setTransform( &mtx[0][0] );

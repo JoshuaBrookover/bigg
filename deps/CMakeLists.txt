@@ -12,7 +12,10 @@ set( GLFW_INSTALL         OFF CACHE INTERNAL "" )
 add_subdirectory( glfw )
 
 # glm
-include( glm.cmake )
+set( GLM_TEST_ENABLE      OFF CACHE INTERNAL "" )
+set( BUILD_SHARED_LIBS    OFF CACHE INTERNAL "" )
+set( BUILD_STATIC_LIBS    OFF CACHE INTERNAL "" )
+add_subdirectory( glm )
 
 # imgui
 include( imgui.cmake )
