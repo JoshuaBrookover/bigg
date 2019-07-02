@@ -62,14 +62,16 @@ void bigg::Application::keyCallback( GLFWwindow* window, int key, int scancode, 
 	{
 		io.KeysDown[ key ] = true;
 	}
-	if ( action == GLFW_RELEASE )
+	else if ( action == GLFW_RELEASE )
 	{
 		io.KeysDown[ key ] = false;
 	}
+
 	io.KeyCtrl = io.KeysDown[ GLFW_KEY_LEFT_CONTROL ] || io.KeysDown[ GLFW_KEY_RIGHT_CONTROL ];
 	io.KeyShift = io.KeysDown[ GLFW_KEY_LEFT_SHIFT ] || io.KeysDown[ GLFW_KEY_RIGHT_SHIFT ];
 	io.KeyAlt = io.KeysDown[ GLFW_KEY_LEFT_ALT ] || io.KeysDown[ GLFW_KEY_RIGHT_ALT ];
 	io.KeySuper = io.KeysDown[ GLFW_KEY_LEFT_SUPER ] || io.KeysDown[ GLFW_KEY_RIGHT_SUPER ];
+
 	if ( !io.WantCaptureKeyboard )
 	{
 		app->onKey( key, scancode, action, mods );
@@ -80,10 +82,7 @@ void bigg::Application::charCallback( GLFWwindow* window, unsigned int codepoint
 {
 	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
 	ImGuiIO& io = ImGui::GetIO();
-	if ( codepoint > 0 && codepoint < 0x10000 )
-	{
-		io.AddInputCharacter( ( unsigned short )codepoint );
-	}
+	io.AddInputCharacter( codepoint );
 	app->onChar( codepoint );
 }
 
@@ -97,10 +96,18 @@ void bigg::Application::mouseButtonCallback( GLFWwindow* window, int button, int
 {
 	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
 	ImGuiIO& io = ImGui::GetIO();
-	if ( action == GLFW_PRESS && button >= 0 && button < 3 )
+	if ( button >= 0 && button < IM_ARRAYSIZE( io.MouseDown ) )
 	{
-		app->mMousePressed[button] = true;
+		if ( action == GLFW_PRESS )
+		{
+			io.MouseDown[ button ] = true;
+		}
+		else if ( action == GLFW_RELEASE )
+		{
+			io.MouseDown[ button ] = false;
+		}
 	}
+
 	if ( !io.WantCaptureMouse )
 	{
 		app->onMouseButton( button, action, mods );
@@ -122,7 +129,9 @@ void bigg::Application::cursorEnterCallback( GLFWwindow* window, int entered )
 void bigg::Application::scrollCallback( GLFWwindow* window, double xoffset, double yoffset )
 {
 	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
-	app->mMouseWheel += (float)yoffset;
+	ImGuiIO& io = ImGui::GetIO();
+	io.MouseWheelH += ( float )xoffset;
+	io.MouseWheel += ( float )yoffset;
 	app->onScroll( xoffset, yoffset );
 }
 
@@ -141,49 +150,11 @@ void bigg::Application::windowSizeCallback( GLFWwindow* window, int width, int h
 	app->onWindowSize( width, height );
 }
 
-void bigg::Application::imguiEvents( float dt )
-{
-	ImGuiIO& io = ImGui::GetIO();
-	io.DeltaTime = dt;
-	int w, h;
-	int displayW, displayH;
-	glfwGetWindowSize( mWindow, &w, &h );
-	glfwGetFramebufferSize( mWindow, &displayW, &displayH );
-	io.DisplaySize = ImVec2( ( float )w, ( float )h );
-	io.DisplayFramebufferScale = ImVec2( w > 0 ? ( ( float )displayW / w ) : 0, h > 0 ? ( ( float )displayH / h ) : 0 );
-	if ( glfwGetWindowAttrib( mWindow, GLFW_FOCUSED ) )
-	{
-		double mouse_x, mouse_y;
-		glfwGetCursorPos( mWindow, &mouse_x, &mouse_y );
-		io.MousePos = ImVec2( ( float )mouse_x, ( float )mouse_y );
-	}
-	else
-	{
-		io.MousePos = ImVec2( -1, -1 );
-	}
-	for (int i = 0; i < 3; i++)
-	{
-		io.MouseDown[ i ] = mMousePressed[ i ] || glfwGetMouseButton( mWindow, i ) != 0;
-		mMousePressed[ i ] = false;
-	}
-	io.MouseWheel = mMouseWheel;
-	mMouseWheel = 0.0f;
-	glfwSetInputMode( mWindow, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL );
-	io.ClipboardUserData = mWindow;
-#ifdef _WIN32
-	io.ImeWindowHandle = glfwGetWin32Window( mWindow );
-#endif
-}
-
 bigg::Application::Application( const char* title, uint32_t width, uint32_t height )
 {
 	mWidth = width;
 	mHeight = height;
 	mTitle = title;
-	mMousePressed[ 0 ] = false;
-	mMousePressed[ 1 ] = false;
-	mMousePressed[ 2 ] = false;
-	mMouseWheel = 0.0f;
 }
 
 int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type, uint16_t vendorId, uint16_t deviceId, bgfx::CallbackI* callback, bx::AllocatorI* allocator )
@@ -219,12 +190,12 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 	bgfx::PlatformData platformData;
 	memset( &platformData, 0, sizeof( platformData ) );
 #if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
-	platformData.nwh = (void*)(uintptr_t)glfwGetX11Window(mWindow);
+	platformData.nwh = ( void* )( uintptr_t )glfwGetX11Window( mWindow );
 	platformData.ndt = glfwGetX11Display();
 #elif BX_PLATFORM_OSX
-	platformData.nwh = glfwGetCocoaWindow(mWindow);
+	platformData.nwh = glfwGetCocoaWindow( mWindow );
 #elif BX_PLATFORM_WINDOWS
-	platformData.nwh = glfwGetWin32Window(mWindow);
+	platformData.nwh = glfwGetWin32Window( mWindow );
 #endif // BX_PLATFORM_
 	bgfx::setPlatformData( platformData );
 
@@ -235,10 +206,10 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 	init.deviceId = deviceId;
 	init.callback = callback;
 	init.allocator = allocator;
-	bgfx::init(init);
+	bgfx::init( init );
 
 	// Setup ImGui
-	imguiInit();
+	imguiInit( mWindow );
 
 	// Initialize the application
 	reset();
@@ -301,5 +272,5 @@ const char* bigg::Application::getTitle() const
 void bigg::Application::setTitle( const char* title )
 {
 	mTitle = title;
-	glfwSetWindowTitle( mWindow, title);
+	glfwSetWindowTitle( mWindow, title );
 }
