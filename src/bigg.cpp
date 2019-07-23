@@ -58,13 +58,16 @@ void bigg::Application::keyCallback( GLFWwindow* window, int key, int scancode, 
 {
 	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
 	ImGuiIO& io = ImGui::GetIO();
-	if ( action == GLFW_PRESS )
+	if ( key != GLFW_KEY_UNKNOWN )
 	{
-		io.KeysDown[ key ] = true;
-	}
-	else if ( action == GLFW_RELEASE )
-	{
-		io.KeysDown[ key ] = false;
+		if ( action == GLFW_PRESS )
+		{
+			io.KeysDown[ key ] = app->mKeyDown[ key ] = true;
+		}
+		else if ( action == GLFW_RELEASE )
+		{
+			io.KeysDown[ key ] = app->mKeyDown[ key ] = false;
+		}
 	}
 
 	io.KeyCtrl = io.KeysDown[ GLFW_KEY_LEFT_CONTROL ] || io.KeysDown[ GLFW_KEY_RIGHT_CONTROL ];
@@ -108,6 +111,18 @@ void bigg::Application::mouseButtonCallback( GLFWwindow* window, int button, int
 		}
 	}
 
+	if ( button >= 0 && button <= GLFW_MOUSE_BUTTON_LAST )
+	{
+		if ( action == GLFW_PRESS )
+		{
+			app->mMouseButtonDown[ button ] = true;
+		}
+		else if ( action == GLFW_RELEASE )
+		{
+			app->mMouseButtonDown[ button ] = false;
+		}
+	}
+
 	if ( !io.WantCaptureMouse )
 	{
 		app->onMouseButton( button, action, mods );
@@ -132,6 +147,8 @@ void bigg::Application::scrollCallback( GLFWwindow* window, double xoffset, doub
 	ImGuiIO& io = ImGui::GetIO();
 	io.MouseWheelH += ( float )xoffset;
 	io.MouseWheel += ( float )yoffset;
+	app->mMouseWheelH += ( float )xoffset;
+	app->mMouseWheel += ( float )yoffset;
 	app->onScroll( xoffset, yoffset );
 }
 

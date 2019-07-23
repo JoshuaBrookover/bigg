@@ -85,6 +85,10 @@ namespace bigg
 	protected:
 		GLFWwindow* mWindow;
 		bigg::Allocator mAllocator;
+		bool mKeyDown[ GLFW_KEY_LAST + 1 ] = { 0 };
+		bool mMouseButtonDown[ GLFW_MOUSE_BUTTON_LAST + 1 ] = { 0 };
+		float mMouseWheelH;
+		float mMouseWheel;
 	private:
 		uint32_t mReset;
 		uint32_t mWidth;
