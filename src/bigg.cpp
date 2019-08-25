@@ -122,8 +122,12 @@ void bigg::Application::cursorEnterCallback( GLFWwindow* window, int entered )
 void bigg::Application::scrollCallback( GLFWwindow* window, double xoffset, double yoffset )
 {
 	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
+	ImGuiIO& io = ImGui::GetIO();
 	app->mMouseWheel += (float)yoffset;
-	app->onScroll( xoffset, yoffset );
+	if ( !io.WantCaptureMouse )
+	{
+		app->onScroll( xoffset, yoffset );
+	}
 }
 
 void bigg::Application::dropCallback( GLFWwindow* window, int count, const char** paths )
