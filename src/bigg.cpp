@@ -56,17 +56,16 @@ bgfx::ProgramHandle bigg::loadProgram( const char* vsName, const char* fsName )
 
 void bigg::Application::keyCallback( GLFWwindow* window, int key, int scancode, int action, int mods )
 {
-	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
 	ImGuiIO& io = ImGui::GetIO();
-	if ( key != GLFW_KEY_UNKNOWN )
+	if ( key >= 0 && key < IM_ARRAYSIZE( io.KeysDown ) )
 	{
 		if ( action == GLFW_PRESS )
 		{
-			io.KeysDown[ key ] = app->mKeyDown[ key ] = true;
+			io.KeysDown[ key ] = true;
 		}
 		else if ( action == GLFW_RELEASE )
 		{
-			io.KeysDown[ key ] = app->mKeyDown[ key ] = false;
+			io.KeysDown[ key ] = false;
 		}
 	}
 
@@ -77,6 +76,7 @@ void bigg::Application::keyCallback( GLFWwindow* window, int key, int scancode, 
 
 	if ( !io.WantCaptureKeyboard )
 	{
+		bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
 		app->onKey( key, scancode, action, mods );
 	}
 }
@@ -97,7 +97,6 @@ void bigg::Application::charModsCallback( GLFWwindow* window, unsigned int codep
 
 void bigg::Application::mouseButtonCallback( GLFWwindow* window, int button, int action, int mods )
 {
-	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
 	ImGuiIO& io = ImGui::GetIO();
 	if ( button >= 0 && button < IM_ARRAYSIZE( io.MouseDown ) )
 	{
@@ -111,20 +110,9 @@ void bigg::Application::mouseButtonCallback( GLFWwindow* window, int button, int
 		}
 	}
 
-	if ( button >= 0 && button <= GLFW_MOUSE_BUTTON_LAST )
-	{
-		if ( action == GLFW_PRESS )
-		{
-			app->mMouseButtonDown[ button ] = true;
-		}
-		else if ( action == GLFW_RELEASE )
-		{
-			app->mMouseButtonDown[ button ] = false;
-		}
-	}
-
 	if ( !io.WantCaptureMouse )
 	{
+		bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
 		app->onMouseButton( button, action, mods );
 	}
 }
@@ -143,13 +131,17 @@ void bigg::Application::cursorEnterCallback( GLFWwindow* window, int entered )
 
 void bigg::Application::scrollCallback( GLFWwindow* window, double xoffset, double yoffset )
 {
-	bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
 	ImGuiIO& io = ImGui::GetIO();
 	io.MouseWheelH += ( float )xoffset;
 	io.MouseWheel += ( float )yoffset;
-	app->mMouseWheelH += ( float )xoffset;
-	app->mMouseWheel += ( float )yoffset;
-	app->onScroll( xoffset, yoffset );
+	
+	if ( !io.WantCaptureMouse )
+	{
+		bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
+		app->mMouseWheelH += ( float )xoffset;
+		app->mMouseWheel += ( float )yoffset;
+		app->onScroll( xoffset, yoffset );
+	}
 }
 
 void bigg::Application::dropCallback( GLFWwindow* window, int count, const char** paths )
@@ -290,4 +282,36 @@ void bigg::Application::setTitle( const char* title )
 {
 	mTitle = title;
 	glfwSetWindowTitle( mWindow, title );
+}
+
+bool bigg::Application::isKeyDown( int key ) const
+{
+	ImGuiIO& io = ImGui::GetIO();
+	if ( key < GLFW_KEY_SPACE || key > GLFW_KEY_LAST || io.WantCaptureKeyboard )
+	{
+		return false;
+	}
+
+	return glfwGetKey( mWindow, key ) == GLFW_PRESS;
+}
+
+bool bigg::Application::isMouseButtonDown( int button ) const
+{
+	ImGuiIO& io = ImGui::GetIO();
+	if ( button < GLFW_MOUSE_BUTTON_1 || button > GLFW_MOUSE_BUTTON_LAST || io.WantCaptureMouse )
+	{
+		return false;
+	}
+	
+	return glfwGetMouseButton( mWindow, button ) == GLFW_PRESS;
+}
+
+float bigg::Application::getMouseWheelH() const
+{
+	return mMouseWheelH;
+}
+
+float bigg::Application::getMouseWheel() const
+{
+	return mMouseWheel;
 }

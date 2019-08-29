@@ -67,6 +67,10 @@ namespace bigg
 		void setSize( int width, int height );
 		const char* getTitle() const;
 		void setTitle( const char* title );
+		bool isKeyDown( int key ) const;
+		bool isMouseButtonDown( int button ) const;
+		float getMouseWheelH() const;
+		float getMouseWheel() const;
 
 		virtual void initialize( int _argc, char** _argv ) {};
 		virtual void update( float dt ) {};
@@ -85,14 +89,12 @@ namespace bigg
 	protected:
 		GLFWwindow* mWindow;
 		bigg::Allocator mAllocator;
-		bool mKeyDown[ GLFW_KEY_LAST + 1 ] = { 0 };
-		bool mMouseButtonDown[ GLFW_MOUSE_BUTTON_LAST + 1 ] = { 0 };
-		float mMouseWheelH;
-		float mMouseWheel;
 	private:
 		uint32_t mReset;
 		uint32_t mWidth;
 		uint32_t mHeight;
 		const char* mTitle;
+		float mMouseWheelH = 0.0f;
+		float mMouseWheel = 0.0f;
 	};
 }
