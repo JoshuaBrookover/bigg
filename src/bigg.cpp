@@ -1,5 +1,5 @@
 /*
- * This is free and unencumbered software released into the public domain. 
+ * This is free and unencumbered software released into the public domain.
  */
 
 #include <bigg.hpp>
@@ -134,7 +134,7 @@ void bigg::Application::scrollCallback( GLFWwindow* window, double xoffset, doub
 	ImGuiIO& io = ImGui::GetIO();
 	io.MouseWheelH += ( float )xoffset;
 	io.MouseWheel += ( float )yoffset;
-	
+
 	if ( !io.WantCaptureMouse )
 	{
 		bigg::Application* app = ( bigg::Application* )glfwGetWindowUserPointer( window );
@@ -210,6 +210,7 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 
 	// Init bgfx
 	bgfx::Init init;
+	// init.debug = true;
 	init.type = type;
 	init.vendorId = vendorId;
 	init.deviceId = deviceId;
@@ -302,7 +303,7 @@ bool bigg::Application::isMouseButtonDown( int button ) const
 	{
 		return false;
 	}
-	
+
 	return glfwGetMouseButton( mWindow, button ) == GLFW_PRESS;
 }
 

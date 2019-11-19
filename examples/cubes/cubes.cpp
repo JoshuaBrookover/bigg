@@ -11,7 +11,7 @@
 #include <bx/string.h>
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/euler_angles.hpp> 
+#include <glm/gtx/euler_angles.hpp>
 
 struct PosColorVertex
 {
@@ -21,15 +21,15 @@ struct PosColorVertex
 	uint32_t abgr;
 	static void init()
 	{
-		ms_decl
+		ms_layout
 			.begin()
 			.add( bgfx::Attrib::Position, 3, bgfx::AttribType::Float )
 			.add( bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true )
 			.end();
 	}
-	static bgfx::VertexDecl ms_decl;
+	static bgfx::VertexLayout ms_layout;
 };
-bgfx::VertexDecl PosColorVertex::ms_decl;
+bgfx::VertexLayout PosColorVertex::ms_layout;
 
 static PosColorVertex s_cubeVertices[] =
 {
@@ -76,7 +76,7 @@ class ExampleCubes : public bigg::Application
 		bx::strCat( fsName, BX_COUNTOF(fsName), "fs_cubes.bin" );
 
 		mProgram = bigg::loadProgram( vsName, fsName );
-		mVbh = bgfx::createVertexBuffer( bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices) ), PosColorVertex::ms_decl );
+		mVbh = bgfx::createVertexBuffer( bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices) ), PosColorVertex::ms_layout );
 		mIbh = bgfx::createIndexBuffer( bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList) ) );
 		bgfx::setDebug( BGFX_DEBUG_TEXT );
 		mTime = 0.0f;
@@ -124,5 +124,11 @@ private:
 int main( int argc, char** argv )
 {
 	ExampleCubes app;
-	return app.run( argc, argv );
+    bgfx::RendererType::Enum type = bgfx::RendererType::Count;
+    if (BX_ENABLED(BX_PLATFORM_WINDOWS))
+    {
+        type = bgfx::RendererType::OpenGL;
+        
+    }
+	return app.run( argc, argv, type );
 }
