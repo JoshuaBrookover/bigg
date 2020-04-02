@@ -65,7 +65,7 @@ class ExampleCubes : public bigg::Application
 			case bgfx::RendererType::Metal:      shaderPath = "shaders/metal/"; break;
 			case bgfx::RendererType::OpenGL:     shaderPath = "shaders/glsl/";  break;
 			case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
-			case bgfx::RendererType::Vulkan:                                    break;
+			case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
 			case bgfx::RendererType::Count:                                     break;
 		}
 
