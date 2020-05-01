@@ -42,9 +42,6 @@ static void imguiInit( GLFWwindow* window )
 	bgfx::ShaderHandle fs = bgfx::createShader( bgfx::makeRef( fs_ocornut_imgui(), fs_ocornut_imgui_len() ) );
 	imguiProgram = bgfx::createProgram( vs, fs, true );
 
-	// Setup render callback
-	io.RenderDrawListsFn = imguiRender;
-
 	// Setup back-end capabilities flags
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
