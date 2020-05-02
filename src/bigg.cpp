@@ -239,6 +239,7 @@ int bigg::Application::run( int argc, char** argv, bgfx::RendererType::Enum type
 		ImGui::NewFrame();
 		update( dt );
 		ImGui::Render();
+		imguiRender( ImGui::GetDrawData() );
 		bgfx::frame();
 	}
 
