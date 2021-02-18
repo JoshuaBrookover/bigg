@@ -18,6 +18,7 @@
 #include <bgfx/platform.h>
 #include <GLFW/glfw3native.h>
 #include <glm/glm.hpp>
+#include <iostream>
 #include <fstream>
 
 #include "bigg_assets.h"
@@ -29,6 +30,11 @@
 const bgfx::Memory* bigg::loadMemory( const char* filename )
 {
 	std::ifstream file( filename, std::ios::binary | std::ios::ate );
+    if (!file.is_open())
+    {
+        std::cerr << "ERROR: Failed opening file " << filename << std::endl;
+	    return nullptr;
+    }
 	std::streamsize size = file.tellg();
 	file.seekg( 0, std::ios::beg );
 	const bgfx::Memory* mem = bgfx::alloc( uint32_t( size + 1 ) );
