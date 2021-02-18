@@ -48,7 +48,13 @@ const bgfx::Memory* bigg::loadMemory( const char* filename )
 
 bgfx::ShaderHandle bigg::loadShader( const char* shader )
 {
-	return bgfx::createShader( loadMemory( shader ) );
+    const bgfx::Memory* memory = loadMemory( shader );
+    if (memory == nullptr)
+    {
+        std::cerr << "Failed loading shader " << shader << std::endl;
+        //Calling bgfx::createShader below will probably crash the program.
+    }
+	return bgfx::createShader( memory );
 }
 
 bgfx::ProgramHandle bigg::loadProgram( const char* vsName, const char* fsName )
